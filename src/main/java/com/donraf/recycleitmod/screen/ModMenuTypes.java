@@ -17,6 +17,9 @@ public class ModMenuTypes {
     public static final RegistryObject<MenuType<RecyclerMenu>> RECYCLER_MENU =
             registerMenuType("recycler_menu", RecyclerMenu::new);
 
+    public static final RegistryObject<MenuType<SynthesizerMenu>> SYNTHESIZER_MENU =
+            registerMenuType("synthesizer_menu", SynthesizerMenu::new);
+
     private static <T extends AbstractContainerMenu>RegistryObject<MenuType<T>> registerMenuType(String name, IContainerFactory<T> factory) {
         return MENUS.register(name, () -> IForgeMenuType.create(factory));
     }

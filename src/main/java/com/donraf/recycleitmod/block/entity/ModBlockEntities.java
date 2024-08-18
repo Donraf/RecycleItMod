@@ -17,6 +17,11 @@ public class ModBlockEntities {
                     BlockEntityType.Builder.of(RecyclerBlockEntity::new,
                             ModBlocks.RECYCLER_BLOCK.get()).build(null));
 
+    public static final RegistryObject<BlockEntityType<SynthesizerBlockEntity>> SYNTHESIZER_BLOCK_ENTITY =
+            BLOCK_ENTITIES.register("synthesizer_block_entity", () ->
+                    BlockEntityType.Builder.of(SynthesizerBlockEntity::new,
+                            ModBlocks.SYNTHESIZER_BLOCK.get()).build(null));
+
     public static void register(IEventBus eventBus) {
         BLOCK_ENTITIES.register(eventBus);
     }

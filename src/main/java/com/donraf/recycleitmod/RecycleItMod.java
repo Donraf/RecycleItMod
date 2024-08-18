@@ -5,6 +5,7 @@ import com.donraf.recycleitmod.block.entity.ModBlockEntities;
 import com.donraf.recycleitmod.item.ModItems;
 import com.donraf.recycleitmod.screen.ModMenuTypes;
 import com.donraf.recycleitmod.screen.RecyclerScreen;
+import com.donraf.recycleitmod.screen.SynthesizerScreen;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.world.item.CreativeModeTabs;
@@ -59,6 +60,7 @@ public class RecycleItMod {
 
         if(event.getTabKey() == CreativeModeTabs.BUILDING_BLOCKS) {
             event.accept(ModBlocks.RECYCLER_BLOCK);
+            event.accept(ModBlocks.SYNTHESIZER_BLOCK);
         }
     }
 
@@ -74,6 +76,7 @@ public class RecycleItMod {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
             MenuScreens.register(ModMenuTypes.RECYCLER_MENU.get(), RecyclerScreen::new);
+            MenuScreens.register(ModMenuTypes.SYNTHESIZER_MENU.get(), SynthesizerScreen::new);
         }
     }
 }

@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "H": {
+      "item": "minecraft:hopper"
+    },
+    "D": {
+      "item": "minecraft:diamond"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    }
+  },
+  "pattern": [
+    "IHI",
+    "IDI",
+    "III"
+  ],
+  "result": {
+    "count": 1,
+    "id": "recycleitmod:synthesizer_block"
+  }
+}
