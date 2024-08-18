@@ -1,7 +1,12 @@
 package com.donraf.recycleitmod;
 
+import com.donraf.recycleitmod.block.ModBlocks;
+import com.donraf.recycleitmod.block.entity.ModBlockEntities;
 import com.donraf.recycleitmod.item.ModItems;
+import com.donraf.recycleitmod.screen.ModMenuTypes;
+import com.donraf.recycleitmod.screen.RecyclerScreen;
 import com.mojang.logging.LogUtils;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
@@ -32,6 +37,9 @@ public class RecycleItMod {
         MinecraftForge.EVENT_BUS.register(this);
 
         ModItems.register(modEventBus);
+        ModBlocks.register(modEventBus);
+        ModBlockEntities.register(modEventBus);
+        ModMenuTypes.register(modEventBus);
 
         // Register the item to a creative tab
         modEventBus.addListener(this::addCreative);
@@ -48,6 +56,10 @@ public class RecycleItMod {
         if(event.getTabKey() == CreativeModeTabs.INGREDIENTS){
             event.accept(ModItems.SECONDARY_RAW_MATERIAL);
         }
+
+        if(event.getTabKey() == CreativeModeTabs.BUILDING_BLOCKS) {
+            event.accept(ModBlocks.RECYCLER_BLOCK);
+        }
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call
@@ -61,7 +73,7 @@ public class RecycleItMod {
     public static class ClientModEvents {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
-
+            MenuScreens.register(ModMenuTypes.RECYCLER_MENU.get(), RecyclerScreen::new);
         }
     }
 }
