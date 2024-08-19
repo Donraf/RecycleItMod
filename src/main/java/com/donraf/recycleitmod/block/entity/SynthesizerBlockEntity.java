@@ -28,12 +28,14 @@ public class SynthesizerBlockEntity extends BlockEntity implements MenuProvider 
     private final ItemStackHandler itemHandler = new ItemStackHandler(2);
 
     private static final int INPUT_SLOT = 0;
+    private static final int POINTS_PER_SECONDARY_RAW_MATERIAL = 10;
 
     private LazyOptional<IItemHandler> lazyItemHandler = LazyOptional.empty();
 
     protected final ContainerData data;
     private int progress = 0;
     private int maxProgress = 10;
+    private int recyclePoints = 0;
 
     public SynthesizerBlockEntity(BlockPos pPos, BlockState pBlockState) {
         super(ModBlockEntities.SYNTHESIZER_BLOCK_ENTITY.get(), pPos, pBlockState);
@@ -43,6 +45,7 @@ public class SynthesizerBlockEntity extends BlockEntity implements MenuProvider 
                 return switch (pIndex){
                     case 0 -> SynthesizerBlockEntity.this.progress;
                     case 1 -> SynthesizerBlockEntity.this.maxProgress;
+                    case 2 -> SynthesizerBlockEntity.this.recyclePoints;
                     default -> 0;
                 };
             }
@@ -52,12 +55,13 @@ public class SynthesizerBlockEntity extends BlockEntity implements MenuProvider 
                 switch (pIndex){
                     case 0 -> SynthesizerBlockEntity.this.progress = pValue;
                     case 1 -> SynthesizerBlockEntity.this.maxProgress = pValue;
+                    case 2 -> SynthesizerBlockEntity.this.recyclePoints = pValue;
                 }
             }
 
             @Override
             public int getCount() {
-                return 2;
+                return 3;
             }
         };
     }
@@ -104,6 +108,7 @@ public class SynthesizerBlockEntity extends BlockEntity implements MenuProvider 
     protected void saveAdditional(CompoundTag pTag, HolderLookup.Provider pRegistries) {
         pTag.put("inventory", itemHandler.serializeNBT(pRegistries));
         pTag.putInt("synthesizer.progress", progress);
+        pTag.putInt("synthesizer.recyclePoints", recyclePoints);
         super.saveAdditional(pTag, pRegistries);
     }
 
@@ -112,6 +117,7 @@ public class SynthesizerBlockEntity extends BlockEntity implements MenuProvider 
         super.loadAdditional(pTag, pRegistries);
         itemHandler.deserializeNBT(pRegistries, pTag.getCompound("inventory"));
         progress = pTag.getInt("synthesizer.progress");
+        recyclePoints = pTag.getInt("synthesizer.recyclePoints");
     }
 
     public void tick(Level pLevel, BlockPos pPos, BlockState pState) {
@@ -133,11 +139,8 @@ public class SynthesizerBlockEntity extends BlockEntity implements MenuProvider 
     }
 
     private void craftItem() {
-//        ItemStack result = new ItemStack(ModItems.SECONDARY_RAW_MATERIAL.get(), 1);
         this.itemHandler.extractItem(INPUT_SLOT, 1, false);
-
-//        this.itemHandler.setStackInSlot(OUTPUT_SLOT, new ItemStack(result.getItem(),
-//                this.itemHandler.getStackInSlot(OUTPUT_SLOT).getCount() + result.getCount()));
+        this.recyclePoints += POINTS_PER_SECONDARY_RAW_MATERIAL;
     }
 
     private boolean hasProgressFinished() {

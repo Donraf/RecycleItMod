@@ -18,7 +18,7 @@ public class SynthesizerMenu extends AbstractContainerMenu {
     private final ContainerData data;
 
     public SynthesizerMenu(int pContainerId, Inventory inv, FriendlyByteBuf extraData) {
-        this(pContainerId, inv, inv.player.level().getBlockEntity(extraData.readBlockPos()), new SimpleContainerData(2));
+        this(pContainerId, inv, inv.player.level().getBlockEntity(extraData.readBlockPos()), new SimpleContainerData(3));
     }
 
     public SynthesizerMenu(int pContainerId, Inventory inv, BlockEntity entity, ContainerData data) {
@@ -32,7 +32,7 @@ public class SynthesizerMenu extends AbstractContainerMenu {
         addPlayerHotbar(inv);
 
         this.blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(iItemHandler -> {
-            this.addSlot(new SlotItemHandler(iItemHandler, 0, 35, 8));
+            this.addSlot(new SlotItemHandler(iItemHandler, 0, 180, 10));
         });
 
         addDataSlots(data);
@@ -41,6 +41,8 @@ public class SynthesizerMenu extends AbstractContainerMenu {
     public boolean isCrafting() {
         return data.get(0) > 0;
     }
+
+    public int getRecyclePoints() {return data.get(2);}
 
     public int getScaledProgress() {
         int progress = this.data.get(0);
@@ -108,14 +110,14 @@ public class SynthesizerMenu extends AbstractContainerMenu {
     private void addPlayerInventory(Inventory playerInventory) {
         for (int i = 0; i < 3; ++i) {
             for (int l = 0; l < 9; ++l) {
-                this.addSlot(new Slot(playerInventory, l + i * 9 + 9, 8 + l * 18, 84 + i * 18));
+                this.addSlot(new Slot(playerInventory, l + i * 9 + 9, 108 + l * 18, 84 + i * 18));
             }
         }
     }
 
     private void addPlayerHotbar(Inventory playerInventory) {
         for (int i = 0; i < 9; ++i) {
-            this.addSlot(new Slot(playerInventory, i, 8 + i * 18, 142));
+            this.addSlot(new Slot(playerInventory, i, 108 + i * 18, 142));
         }
     }
 }
