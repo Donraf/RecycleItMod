@@ -3,6 +3,7 @@ package com.donraf.recycleitmod;
 import com.donraf.recycleitmod.block.ModBlocks;
 import com.donraf.recycleitmod.block.entity.ModBlockEntities;
 import com.donraf.recycleitmod.item.ModItems;
+import com.donraf.recycleitmod.network.RecycleItModPacketHandler;
 import com.donraf.recycleitmod.screen.ModMenuTypes;
 import com.donraf.recycleitmod.screen.RecyclerScreen;
 import com.donraf.recycleitmod.screen.SynthesizerScreen;
@@ -42,6 +43,8 @@ public class RecycleItMod {
         ModBlockEntities.register(modEventBus);
         ModMenuTypes.register(modEventBus);
 
+        RecycleItModPacketHandler.registerMessages();
+
         // Register the item to a creative tab
         modEventBus.addListener(this::addCreative);
         // Register our mod's ForgeConfigSpec so that Forge can create and load the config file for us
@@ -67,7 +70,6 @@ public class RecycleItMod {
     // You can use SubscribeEvent and let the Event Bus discover methods to call
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) {
-
     }
 
     // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent

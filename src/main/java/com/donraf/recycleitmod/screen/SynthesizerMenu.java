@@ -44,6 +44,24 @@ public class SynthesizerMenu extends AbstractContainerMenu {
 
     public int getRecyclePoints() {return data.get(2);}
 
+    public void giveItem(Player pPlayer, int item){
+        if (getRecyclePoints() < SynthesizerScreen.costs[item]){
+            return;
+        }
+        boolean isItemAdded = pPlayer.addItem(new ItemStack(SynthesizerScreen.items.get(item)));
+        if (isItemAdded) {
+            if (pPlayer.isCreative()) {
+                return;
+            }
+            addRecyclePoints(-SynthesizerScreen.costs[item]);
+        }
+
+    }
+
+    public void addRecyclePoints(int recyclePoints) {
+        data.set(2, data.get(2) + recyclePoints);
+    }
+
     public int getScaledProgress() {
         int progress = this.data.get(0);
         int maxProgress = this.data.get(1);

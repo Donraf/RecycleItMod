@@ -1,6 +1,8 @@
 package com.donraf.recycleitmod.screen;
 
 import com.donraf.recycleitmod.RecycleItMod;
+import com.donraf.recycleitmod.network.RecycleItModPacketHandler;
+import com.donraf.recycleitmod.network.packet.RecycleItModMessage;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -15,6 +17,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.network.PacketDistributor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,7 +41,7 @@ public class SynthesizerScreen extends AbstractContainerScreen<SynthesizerMenu> 
     int recycleItem;
     int scrollOff;
 
-    private static final ArrayList<Item> items = new ArrayList<>(Arrays.asList(
+    public static final ArrayList<Item> items = new ArrayList<>(Arrays.asList(
             Items.COAL,
             Items.GLOWSTONE_DUST,
             Items.LAPIS_LAZULI,
@@ -52,7 +55,7 @@ public class SynthesizerScreen extends AbstractContainerScreen<SynthesizerMenu> 
             Items.DIAMOND,
             Items.NETHERITE_INGOT
     ));
-    private static final int[] costs = {
+    public static final int[] costs = {
             50,
             50,
             50,
@@ -94,7 +97,8 @@ public class SynthesizerScreen extends AbstractContainerScreen<SynthesizerMenu> 
         this.addRenderableWidget(new SynthesizerButton(x, y, index, btn -> {
             if (btn instanceof SynthesizerScreen.SynthesizerButton) {
                 this.recycleItem = ((SynthesizerScreen.SynthesizerButton) btn).getIndex() + this.scrollOff;
-                // TODO: add transfer of items
+                RecycleItModMessage msg = new RecycleItModMessage(this.recycleItem);
+                RecycleItModPacketHandler.INSTANCE.send(msg, PacketDistributor.SERVER.noArg());
             }
         }));
     }
