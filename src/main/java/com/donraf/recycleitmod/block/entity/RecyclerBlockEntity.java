@@ -26,8 +26,11 @@ import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Random;
+
 public class RecyclerBlockEntity extends BlockEntity implements MenuProvider {
     private final ItemStackHandler itemHandler = new ItemStackHandler(2);
+    private final Random random = new Random();
 
     private static final int INPUT_SLOT = 0;
     private static final int OUTPUT_SLOT = 1;
@@ -37,6 +40,7 @@ public class RecyclerBlockEntity extends BlockEntity implements MenuProvider {
     protected final ContainerData data;
     private int progress = 0;
     private int maxProgress = 30;
+    private float recycleProbability = 0.1f;
 
     public RecyclerBlockEntity(BlockPos pPos, BlockState pBlockState) {
         super(ModBlockEntities.RECYCLER_BLOCK_ENTITY.get(), pPos, pBlockState);
@@ -136,11 +140,12 @@ public class RecyclerBlockEntity extends BlockEntity implements MenuProvider {
     }
 
     private void craftItem() {
-        ItemStack result = new ItemStack(ModItems.SECONDARY_RAW_MATERIAL.get(), 1);
         this.itemHandler.extractItem(INPUT_SLOT, 1, false);
-
-        this.itemHandler.setStackInSlot(OUTPUT_SLOT, new ItemStack(result.getItem(),
-                this.itemHandler.getStackInSlot(OUTPUT_SLOT).getCount() + result.getCount()));
+        if (random.nextFloat() <= recycleProbability){
+            ItemStack result = new ItemStack(ModItems.SECONDARY_RAW_MATERIAL.get(), 1);
+            this.itemHandler.setStackInSlot(OUTPUT_SLOT, new ItemStack(result.getItem(),
+                    this.itemHandler.getStackInSlot(OUTPUT_SLOT).getCount() + result.getCount()));
+        }
     }
 
     private boolean hasProgressFinished() {
