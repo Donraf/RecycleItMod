@@ -24,6 +24,7 @@ import java.util.Arrays;
 
 public class SynthesizerScreen extends AbstractContainerScreen<SynthesizerMenu> {
     private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(RecycleItMod.MOD_ID, "textures/gui/synthesizer_gui.png");
+    private static final ResourceLocation ARROW_TEXTURE = ResourceLocation.fromNamespaceAndPath(RecycleItMod.MOD_ID, "textures/gui/synthesizer_gui_arrow.png");
     private static final ResourceLocation SCROLLER_SPRITE = ResourceLocation.withDefaultNamespace("container/villager/scroller");
     private static final ResourceLocation SCROLLER_DISABLED_SPRITE = ResourceLocation.withDefaultNamespace("container/villager/scroller_disabled");
     private static final int TEXTURE_WIDTH = 512;
@@ -136,7 +137,7 @@ public class SynthesizerScreen extends AbstractContainerScreen<SynthesizerMenu> 
 
     private void renderProgressArrow(GuiGraphics pGuiGraphics, int x, int y) {
         if (menu.isCrafting()) {
-            pGuiGraphics.blit(TEXTURE, x + 85, y + 30, 176, 0, 8, menu.getScaledProgress());
+            pGuiGraphics.blit(ARROW_TEXTURE, x + 180, y + 29, 0, 0, 15, menu.getScaledProgress(),15, 21);
         }
     }
 
@@ -163,6 +164,7 @@ public class SynthesizerScreen extends AbstractContainerScreen<SynthesizerMenu> 
             i1++;
         }
         pGuiGraphics.drawString(this.font, "" + menu.getRecyclePoints(), x + 161, y + 55, 4210752, false);
+        renderProgressArrow(pGuiGraphics, x, y);
         RenderSystem.enableDepthTest();
     }
 
