@@ -12,7 +12,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.api.distmarker.Dist;
@@ -42,39 +41,49 @@ public class SynthesizerScreen extends AbstractContainerScreen<SynthesizerMenu> 
     int recycleItem;
     int scrollOff;
 
-    public static final ArrayList<Item> items = new ArrayList<>(Arrays.asList(
-            Items.COAL,
-            Items.GLOWSTONE_DUST,
-            Items.LAPIS_LAZULI,
-            Items.REDSTONE,
-            Items.QUARTZ,
-            Items.AMETHYST_SHARD,
-            Items.COPPER_INGOT,
-            Items.IRON_INGOT,
-            Items.GOLD_INGOT,
-            Items.EMERALD,
-            Items.DIAMOND,
-            Items.NETHERITE_INGOT
+    public static final ArrayList<ItemStack> items = new ArrayList<>(Arrays.asList(
+            new ItemStack(Items.COAL),
+            new ItemStack(Items.GLOWSTONE_DUST),
+            new ItemStack(Items.LAPIS_LAZULI),
+            new ItemStack(Items.REDSTONE),
+            new ItemStack(Items.QUARTZ),
+            new ItemStack(Items.AMETHYST_SHARD),
+            new ItemStack(Items.COPPER_INGOT),
+            new ItemStack(Items.IRON_INGOT),
+            new ItemStack(Items.GOLD_INGOT),
+            new ItemStack(Items.EMERALD),
+            new ItemStack(Items.DIAMOND),
+            new ItemStack(Items.NETHERITE_INGOT)
     ));
-    public static final int[] costs = {
-            50,
-            50,
-            50,
-            50,
-            50,
-            50,
-            50,
-            100,
-            150,
-            1000,
-            1500,
-            2000
+    public static final String[] costs = {
+            "50",
+            "50",
+            "50",
+            "50",
+            "50",
+            "50",
+            "50",
+            "100",
+            "150",
+            "1000",
+            "1500",
+            "2000"
     };
 
     public SynthesizerScreen(SynthesizerMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
         super(pMenu, pPlayerInventory, pTitle);
         this.imageWidth = 276;
         this.inventoryLabelX = 107;
+    }
+
+    @Override
+    protected void init() {
+        super.init();
+        int x = (this.width - this.imageWidth) / 2;
+        int y = (this.height - this.imageHeight) / 2;
+        for (int i = 0; i < MAX_BUTTONS_ON_SCREEN; i++) {
+            renderButton(x + BUTTON_X, y + BUTTON_LIST_TOP_POS_Y + BUTTON_HEIGHT * i, i);
+        }
     }
 
     @Override
@@ -89,9 +98,6 @@ public class SynthesizerScreen extends AbstractContainerScreen<SynthesizerMenu> 
         int x = (this.width - this.imageWidth) / 2;
         int y = (this.height - this.imageHeight) / 2;
         pGuiGraphics.blit(TEXTURE, x, y, 0, 0, this.imageWidth, this.imageHeight, TEXTURE_WIDTH, TEXTURE_HEIGHT);
-        for (int i = 0; i < MAX_BUTTONS_ON_SCREEN; i++) {
-            renderButton(x + BUTTON_X, y + BUTTON_LIST_TOP_POS_Y + BUTTON_HEIGHT * i, i);
-        }
     }
 
     private void renderButton(int x, int y, int index) {
@@ -151,13 +157,13 @@ public class SynthesizerScreen extends AbstractContainerScreen<SynthesizerMenu> 
         this.renderScroller(pGuiGraphics, x, y);
 
         int i1 = 0;
-        for (Item item : items) {
+        for (ItemStack item : items) {
             if (!this.canScroll(items.size()) || i1 >= this.scrollOff && i1 < MAX_BUTTONS_ON_SCREEN + this.scrollOff) {
                 pGuiGraphics.pose().pushPose();
                 pGuiGraphics.pose().translate(0.0F, 0.0F, 100.0F);
                 int j1 = k + 3;
-                pGuiGraphics.drawString(this.font, "" + costs[i1], x + 32, j1 + 4, 4210752, false);
-                pGuiGraphics.renderFakeItem(new ItemStack(item), x + 10, j1);
+                pGuiGraphics.drawString(this.font, costs[i1], x + 32, j1 + 4, 4210752, false);
+                pGuiGraphics.renderFakeItem(item, x + 10, j1);
                 pGuiGraphics.pose().popPose();
                 k += 20;
             }
