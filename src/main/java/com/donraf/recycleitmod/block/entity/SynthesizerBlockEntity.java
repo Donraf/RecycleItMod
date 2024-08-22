@@ -3,6 +3,7 @@ package com.donraf.recycleitmod.block.entity;
 import com.donraf.recycleitmod.item.ModItems;
 import com.donraf.recycleitmod.screen.SynthesizerMenu;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -25,12 +26,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class SynthesizerBlockEntity extends BlockEntity implements MenuProvider {
-    private final ItemStackHandler itemHandler = new ItemStackHandler(2);
-
+    private final ItemStackHandler itemHandler = new ItemStackHandler(1);
     private static final int INPUT_SLOT = 0;
     private static final int POINTS_PER_SECONDARY_RAW_MATERIAL = 10;
 
-    private LazyOptional<IItemHandler> lazyItemHandler = LazyOptional.empty();
+    private LazyOptional<IItemHandler> lazyItemHandler = LazyOptional.of(() -> itemHandler);
 
     protected final ContainerData data;
     private int progress = 0;
@@ -72,6 +72,18 @@ public class SynthesizerBlockEntity extends BlockEntity implements MenuProvider 
             return lazyItemHandler.cast();
         }
         return super.getCapability(cap);
+    }
+
+    @Override
+    public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
+        if (cap == ForgeCapabilities.ITEM_HANDLER) {
+            assert side != null;
+            return switch (side) {
+                case DOWN -> LazyOptional.empty();
+                default -> lazyItemHandler.cast();
+            };
+        }
+        return super.getCapability(cap, side);
     }
 
     @Override
