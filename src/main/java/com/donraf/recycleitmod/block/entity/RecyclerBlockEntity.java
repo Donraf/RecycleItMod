@@ -3,6 +3,7 @@ package com.donraf.recycleitmod.block.entity;
 import com.donraf.recycleitmod.item.ModItems;
 import com.donraf.recycleitmod.screen.RecyclerMenu;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -29,13 +30,13 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Random;
 
 public class RecyclerBlockEntity extends BlockEntity implements MenuProvider {
-    private final ItemStackHandler itemHandler = new ItemStackHandler(2);
+    private final ItemStackHandler inputItemHandler = new ItemStackHandler(1);
+    private final ItemStackHandler outputItemHandler = new ItemStackHandler(1);
+
     private final Random random = new Random();
 
-    private static final int INPUT_SLOT = 0;
-    private static final int OUTPUT_SLOT = 1;
-
-    private LazyOptional<IItemHandler> lazyItemHandler = LazyOptional.empty();
+    private LazyOptional<IItemHandler> lazyInputItemHandler = LazyOptional.of(() -> inputItemHandler);
+    private LazyOptional<IItemHandler> lazyOutputItemHandler = LazyOptional.of(()-> outputItemHandler);
 
     protected final ContainerData data;
     private int progress = 0;
@@ -72,28 +73,39 @@ public class RecyclerBlockEntity extends BlockEntity implements MenuProvider {
     @Override
     public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap) {
         if (cap == ForgeCapabilities.ITEM_HANDLER) {
-            return lazyItemHandler.cast();
+            return lazyInputItemHandler.cast();
         }
         return super.getCapability(cap);
     }
 
     @Override
+    public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
+        if (cap == ForgeCapabilities.ITEM_HANDLER) {
+            assert side != null;
+            return switch (side) {
+                case DOWN -> lazyOutputItemHandler.cast();
+                default -> lazyInputItemHandler.cast();
+            };
+        }
+        return super.getCapability(cap, side);
+    }
+
+    @Override
     public void onLoad() {
         super.onLoad();
-        lazyItemHandler = LazyOptional.of(() -> itemHandler);
     }
 
     @Override
     public void invalidateCaps() {
         super.invalidateCaps();
-        lazyItemHandler.invalidate();
+        lazyInputItemHandler.invalidate();
+        lazyOutputItemHandler.invalidate();
     }
 
     public void drops() {
-        SimpleContainer inventory = new SimpleContainer(itemHandler.getSlots());
-        for (int i = 0; i < itemHandler.getSlots(); i++) {
-            inventory.setItem(i, itemHandler.getStackInSlot(i));
-        }
+        SimpleContainer inventory = new SimpleContainer(2);
+        inventory.setItem(0, inputItemHandler.getStackInSlot(0));
+        inventory.setItem(1, outputItemHandler.getStackInSlot(0));
         Containers.dropContents(this.level, this.worldPosition, inventory);
     }
 
@@ -109,7 +121,8 @@ public class RecyclerBlockEntity extends BlockEntity implements MenuProvider {
 
     @Override
     protected void saveAdditional(CompoundTag pTag, HolderLookup.Provider pRegistries) {
-        pTag.put("inventory", itemHandler.serializeNBT(pRegistries));
+        pTag.put("input_inventory", inputItemHandler.serializeNBT(pRegistries));
+        pTag.put("output_inventory", outputItemHandler.serializeNBT(pRegistries));
         pTag.putInt("recycler.progress", progress);
         super.saveAdditional(pTag, pRegistries);
     }
@@ -117,7 +130,8 @@ public class RecyclerBlockEntity extends BlockEntity implements MenuProvider {
     @Override
     protected void loadAdditional(CompoundTag pTag, HolderLookup.Provider pRegistries) {
         super.loadAdditional(pTag, pRegistries);
-        itemHandler.deserializeNBT(pRegistries, pTag.getCompound("inventory"));
+        inputItemHandler.deserializeNBT(pRegistries, pTag.getCompound("input_inventory"));
+        outputItemHandler.deserializeNBT(pRegistries, pTag.getCompound("output_inventory"));
         progress = pTag.getInt("recycler.progress");
     }
 
@@ -140,11 +154,11 @@ public class RecyclerBlockEntity extends BlockEntity implements MenuProvider {
     }
 
     private void craftItem() {
-        this.itemHandler.extractItem(INPUT_SLOT, 1, false);
+        this.inputItemHandler.extractItem(0, 1, false);
         if (random.nextFloat() <= recycleProbability){
             ItemStack result = new ItemStack(ModItems.SECONDARY_RAW_MATERIAL.get(), 1);
-            this.itemHandler.setStackInSlot(OUTPUT_SLOT, new ItemStack(result.getItem(),
-                    this.itemHandler.getStackInSlot(OUTPUT_SLOT).getCount() + result.getCount()));
+            this.outputItemHandler.setStackInSlot(0, new ItemStack(result.getItem(),
+                    this.outputItemHandler.getStackInSlot(0).getCount() + result.getCount()));
         }
     }
 
@@ -157,7 +171,7 @@ public class RecyclerBlockEntity extends BlockEntity implements MenuProvider {
     }
 
     private boolean hasRecipe() {
-        boolean hasCraftingItem = this.itemHandler.getStackInSlot(INPUT_SLOT).getCount() != 0;
+        boolean hasCraftingItem = this.inputItemHandler.getStackInSlot(0).getCount() != 0;
         ItemStack result = new ItemStack(ModItems.SECONDARY_RAW_MATERIAL.get());
 
         return hasCraftingItem
@@ -166,12 +180,12 @@ public class RecyclerBlockEntity extends BlockEntity implements MenuProvider {
     }
 
     private boolean canInsertItemIntoOutputSlot(Item item) {
-        return this.itemHandler.getStackInSlot(OUTPUT_SLOT).isEmpty()
-                || this.itemHandler.getStackInSlot(OUTPUT_SLOT).is(item);
+        return this.outputItemHandler.getStackInSlot(0).isEmpty()
+                || this.outputItemHandler.getStackInSlot(0).is(item);
     }
 
     private boolean canInsertAmountIntoOutputSlot(int count) {
-        return this.itemHandler.getStackInSlot(OUTPUT_SLOT).getCount() + count <= this.itemHandler.getStackInSlot(OUTPUT_SLOT).getMaxStackSize();
+        return this.outputItemHandler.getStackInSlot(0).getCount() + count <= this.outputItemHandler.getStackInSlot(0).getMaxStackSize();
     }
 
 }
