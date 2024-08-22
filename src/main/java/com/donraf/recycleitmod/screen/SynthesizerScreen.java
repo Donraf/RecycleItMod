@@ -89,8 +89,7 @@ public class SynthesizerScreen extends AbstractContainerScreen<SynthesizerMenu> 
     @Override
     protected void renderLabels(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY) {
         pGuiGraphics.drawString(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY, 4210752, false);
-        int l = this.font.width(TITLE_LABEL);
-        pGuiGraphics.drawString(this.font, TITLE_LABEL, 5 - l / 2 + 48, 6, 4210752, false);
+        pGuiGraphics.drawString(this.font, TITLE_LABEL, 5, 6, 4210752, false);
     }
 
     @Override
