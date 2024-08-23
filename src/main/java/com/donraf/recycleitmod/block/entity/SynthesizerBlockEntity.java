@@ -36,6 +36,7 @@ public class SynthesizerBlockEntity extends BlockEntity implements MenuProvider 
     private int progress = 0;
     private int maxProgress = 10;
     private int recyclePoints = 0;
+    private final int maxRecyclePoints = 32000;
 
     public SynthesizerBlockEntity(BlockPos pPos, BlockState pBlockState) {
         super(ModBlockEntities.SYNTHESIZER_BLOCK_ENTITY.get(), pPos, pBlockState);
@@ -152,7 +153,11 @@ public class SynthesizerBlockEntity extends BlockEntity implements MenuProvider 
 
     private void craftItem() {
         this.itemHandler.extractItem(INPUT_SLOT, 1, false);
-        this.recyclePoints += POINTS_PER_SECONDARY_RAW_MATERIAL;
+        if (this.recyclePoints + POINTS_PER_SECONDARY_RAW_MATERIAL > this.maxRecyclePoints){
+            this.recyclePoints = this.maxRecyclePoints;
+        } else {
+            this.recyclePoints += POINTS_PER_SECONDARY_RAW_MATERIAL;
+        }
     }
 
     private boolean hasProgressFinished() {
@@ -164,7 +169,8 @@ public class SynthesizerBlockEntity extends BlockEntity implements MenuProvider 
     }
 
     private boolean hasRecipe() {
-        return this.itemHandler.getStackInSlot(INPUT_SLOT).getItem() == ModItems.SECONDARY_RAW_MATERIAL.get();
+        return this.itemHandler.getStackInSlot(INPUT_SLOT).getItem() == ModItems.SECONDARY_RAW_MATERIAL.get()
+                && this.recyclePoints < this.maxRecyclePoints;
     }
 
 }

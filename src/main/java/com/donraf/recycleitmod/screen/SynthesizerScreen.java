@@ -168,7 +168,7 @@ public class SynthesizerScreen extends AbstractContainerScreen<SynthesizerMenu> 
             }
             i1++;
         }
-        pGuiGraphics.drawString(this.font, "" + menu.getRecyclePoints(), x + 161, y + 55, 4210752, false);
+        pGuiGraphics.drawString(this.font, String.valueOf(menu.getRecyclePoints()), x + 161, y + 55, 4210752, false);
         renderProgressArrow(pGuiGraphics, x, y);
         RenderSystem.enableDepthTest();
     }
