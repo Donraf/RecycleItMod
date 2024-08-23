@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:block/orientable",
+  "textures": {
+    "front": "recycleitmod:block/recycler_front",
+    "side": "recycleitmod:block/recycler_side",
+    "top": "recycleitmod:block/recycler_top_on",
+    "bottom": "recycleitmod:block/recycler_side"
+  }
+}

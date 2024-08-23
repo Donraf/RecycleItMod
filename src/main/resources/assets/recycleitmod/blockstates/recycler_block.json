@@ -1,18 +1,33 @@
 {
   "variants": {
-    "facing=east": {
+    "facing=east,on=false": {
       "model": "recycleitmod:block/recycler_block",
       "y": 90
     },
-    "facing=north": {
+    "facing=north,on=false": {
       "model": "recycleitmod:block/recycler_block"
     },
-    "facing=south": {
+    "facing=south,on=false": {
       "model": "recycleitmod:block/recycler_block",
       "y": 180
     },
-    "facing=west": {
+    "facing=west,on=false": {
       "model": "recycleitmod:block/recycler_block",
+      "y": 270
+    },
+    "facing=east,on=true": {
+      "model": "recycleitmod:block/recycler_block_on",
+      "y": 90
+    },
+    "facing=north,on=true": {
+      "model": "recycleitmod:block/recycler_block_on"
+    },
+    "facing=south,on=true": {
+      "model": "recycleitmod:block/recycler_block_on",
+      "y": 180
+    },
+    "facing=west,on=true": {
+      "model": "recycleitmod:block/recycler_block_on",
       "y": 270
     }
   }

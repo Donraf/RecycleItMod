@@ -1,5 +1,6 @@
 package com.donraf.recycleitmod.block.entity;
 
+import com.donraf.recycleitmod.block.custom.RecyclerBlock;
 import com.donraf.recycleitmod.item.ModItems;
 import com.donraf.recycleitmod.screen.RecyclerMenu;
 import net.minecraft.core.BlockPos;
@@ -137,6 +138,8 @@ public class RecyclerBlockEntity extends BlockEntity implements MenuProvider {
 
     public void tick(Level pLevel, BlockPos pPos, BlockState pState) {
         if (hasRecipe()) {
+            pState = pState.setValue(RecyclerBlock.ON, true);
+            pLevel.setBlock(pPos,pState, 3);
             increaseCraftingProgress();
             setChanged(pLevel, pPos, pState);
 
@@ -145,7 +148,10 @@ public class RecyclerBlockEntity extends BlockEntity implements MenuProvider {
                 resetProgress();
             }
         } else {
+            pState = pState.setValue(RecyclerBlock.ON, false);
+            pLevel.setBlock(pPos,pState, 3);
             resetProgress();
+            setChanged(pLevel, pPos, pState);
         }
     }
 
