@@ -5,7 +5,6 @@ import com.donraf.recycleitmod.block.entity.SynthesizerBlockEntity;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.FrontAndTop;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -18,22 +17,17 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
 public class SynthesizerBlock extends BaseEntityBlock {
     public static final MapCodec<SynthesizerBlock> CODEC = simpleCodec(SynthesizerBlock::new);
-    private static final EnumProperty<FrontAndTop> ORIENTATION = BlockStateProperties.ORIENTATION;
+    public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 
     public SynthesizerBlock(BlockBehaviour.Properties pProperties) {
         super(pProperties);
-        this.registerDefaultState(
-                this.stateDefinition
-                        .any()
-                        .setValue(ORIENTATION, FrontAndTop.NORTH_UP)
-        );
+        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
     }
 
     @Override
@@ -58,15 +52,7 @@ public class SynthesizerBlock extends BaseEntityBlock {
 
     @Override
     public @Nullable BlockState getStateForPlacement(BlockPlaceContext pContext) {
-        Direction direction = pContext.getNearestLookingDirection().getOpposite();
-
-        Direction direction1 = switch (direction) {
-            case DOWN -> pContext.getHorizontalDirection().getOpposite();
-            case UP -> pContext.getHorizontalDirection();
-            case NORTH, SOUTH, WEST, EAST -> Direction.UP;
-        };
-        return this.defaultBlockState()
-                .setValue(ORIENTATION, FrontAndTop.fromFrontAndTop(direction, direction1));
+        return this.defaultBlockState().setValue(FACING, pContext.getHorizontalDirection().getOpposite());
     }
 
     @Override
@@ -101,17 +87,17 @@ public class SynthesizerBlock extends BaseEntityBlock {
 
     @Override
     protected BlockState rotate(BlockState pState, Rotation pRotation) {
-        return pState.setValue(ORIENTATION, pRotation.rotation().rotate(pState.getValue(ORIENTATION)));
+        return pState.setValue(FACING, pRotation.rotate(pState.getValue(FACING)));
     }
 
     @Override
     protected BlockState mirror(BlockState pState, Mirror pMirror) {
-        return pState.setValue(ORIENTATION, pMirror.rotation().rotate(pState.getValue(ORIENTATION)));
+        return pState.rotate(pMirror.getRotation(pState.getValue(FACING)));
     }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> pBuilder) {
-        pBuilder.add(ORIENTATION);
+        pBuilder.add(FACING);
     }
 
 }
